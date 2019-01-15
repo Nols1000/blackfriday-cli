@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"github.com/Nols1000/blackfriday-vbcode"
 	"gopkg.in/russross/blackfriday.v2"
@@ -62,7 +63,7 @@ func main() {
 	flag.BoolVar(&hardLineBreak, "hard-line-break", false, "")
 	flag.BoolVar(&tabSizeEight, "tab-size-eight", false, "")
 	flag.BoolVar(&footnotes, "footnotes", false, "")
-	flag.BoolVar(&noEmptyLineBeforeBlock, "no-empty-line-before-blocks", false, "")
+	flag.BoolVar(&noEmptyLineBeforeBlock, "no-empty-line-before-block", false, "")
 	flag.BoolVar(&headingIDs, "heading-ids", false, "")
 	flag.BoolVar(&titleblock, "titleblock", false, "")
 	flag.BoolVar(&autoHeadingIDs, "auto-heading-ids", false, "")
@@ -91,16 +92,16 @@ func main() {
 
 	args := flag.Args()
 
-	var input []byte
+	var temp []byte
 
 	switch len(args) {
 	case 0:
-		if input, err = ioutil.ReadAll(os.Stdin); err != nil {
+		if temp, err = ioutil.ReadAll(os.Stdin); err != nil {
 			log.Fatalf( "Error reading from Stdin:", err)
 			os.Exit(-1)
 		}
 	case 1, 2:
-		if input, err = ioutil.ReadFile(args[0]); err != nil {
+		if temp, err = ioutil.ReadFile(args[0]); err != nil {
 			log.Fatalf( "Error reading from", args[0], ":", err)
 			os.Exit(-1)
 		}
@@ -109,6 +110,8 @@ func main() {
 		os.Exit(-1)
 	}
 
+	input := bytes.Replace(temp, []byte{'\r', '\n'}, []byte{'\n'}, -1)
+	input = bytes.Replace(input, []byte{'\r'}, []byte{'\n'}, -1)
 
 	// HTML-Flags
 	htmlFlags := blackfriday.HTMLFlagsNone

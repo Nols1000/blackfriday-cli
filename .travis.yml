@@ -1,0 +1,28 @@
+language: go
+go:
+  - '1.11'
+  - '1.x'
+
+before_install:
+  # gox simplifies building for multiple architectures
+  - go get github.com/mitchellh/gox
+
+script:
+  - gox -os="linux darwin windows" -arch="amd64 386" -cgo -ldflags "-X main.Version=${TRAVIS_COMMIT}"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: nziuW3hmcyHqvTABRtNEdsXHQT2Gtknzki6TEU2O7Fd70G/v1VKZUSBTPvGfUmgRV5Hbjjs4/b7tPFftcGu4Ruq3gtX3hoIuPzYNkZFCmKDOm2UtkqJgdL/o5PXPLiQrKVzg09sQeQWAfy9HzPA+xAcdo1/dGvukVQUMdLQ4aMp6njHeCZPAUWeT/NafwOdNWuPergKSF+e49rdbBjhtaltNd3CNwJRz3QxC2e8sV8c45VRQ0voCr+DYdNXZ3T3enTJKKSjSQjPRuqdtgM/s/+9FN0ylxyyem5fP2O5uEkcZZ1KKeEpBqE9wmagN2SPIIJtXi3A+MxZDdehgRbK58tccQVWl7ny3/U9r3P91ureqv1sQQlLol2Ot+eu8uIKBau73imlKECpvZMUXY8JUcWrjQQse7awq2LDfhJLOL+Jab0zmP/VX/qT0XUYR85WKyaxoXPymwckboi0jxLZGScw7fgN6PM9I4MwNO8ioHY71GDGpqdoGGJehLEgRxxlrBWGT4adM6RT6v+8oyYEztgVwExc6hFC5JIfYOgNMMqtyUKiLSRxYkmF0/iFQuzgdYr9X1gWKlhpimqkG5KsvxIPCxTA5qT2zYJ7xIzzPwtu86a1YLE29gP0fh4Ic6/N1Jw+kouU9EDX/CqsNS5ftIxVLrrqqv7rONUQMqCfwqTQ=
+  skip_cleanup: true
+  file:
+    - "blackfriday-cli_linux_amd64"
+    - "blackfriday-cli_linux_386"
+    - "blackfriday-cli_darwin_amd64"
+    - "blackfriday-cli_darwin_386"
+    - "blackfriday-cli_windows_amd64.exe"
+    - "blackfriday-cli_windows_386.exe"
+  on:
+    repo: Nols1000/blackfriday-cli
+    condition: $TRAVIS_GO_VERSION =~ ^1\.11
+    tags: true
